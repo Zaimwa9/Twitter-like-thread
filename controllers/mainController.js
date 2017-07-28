@@ -1,44 +1,44 @@
-var Threads = require('../models/threads');
+var Threads = require('../models/threads.js');
 var bodyParser = require('body-parser');
+var moment = require('moment');
 
 module.exports = function(app) {
 
     // Get method when displaying comments
     app.get('/', function(req, res) {
-        res.send('welcome')
-        Threads.find({}, {sort: {created_at: -1}}, function (err, db_results, count){
-            if(err) return err;
+        console.log('received mainpage')
+        Threads.find({}, {} ,{sort: {created_at: -1}}, function (err, db_results, count){
+            if(err) {console.log(err);return err};
             if(!db_results) 
             {   
-                comments = ['test']
-                return res.render('No comments yet');
+                console.log('test')
+                return res.render('mainPage.ejs', {comments:[]});
             }
             console.log(db_results.length + ' comments found');
-            
-            //res.render('mainPage.js', {comments: db_results})
+            res.render('mainPage.ejs', {comments: db_results, moment: moment})
         })
     })
 
    
     // Post method when adding a new comment
     app.post('/newComment', function(req, res) {
-        // Checking carac length
-        if(req.body.content.length > 140){
+        
+        // Checking carac length 
+        if(req.body.comment.length > 140){
             return res.send('Wow dude, did you hear about summarizing ?')
         }
-        /*
-        if(req.body.content.indexOf('fuck') > -1 || req.body.content.indexOf('bitch') > -1 ){
+        
+        if(req.body.comment.indexOf('fuck') > -1 || req.body.comment.indexOf('bitch') > -1 ){
             return res.send('Be polite cowboy')
-        }*/
+        }
         
         var newCom = new Object ({
-            username: 'Tester',
-            content: req.body.content
+            username: 'Tester' + Math.random().toFixed(2),
+            content: req.body.comment
         })
         Threads.newMessage(newCom, function(err, result){
             if(err) return res.send(err);
-            res.send(result);
-            //res.redirect('/allComments')
+            res.redirect('/')
         })
     })
     // Post method when liking
@@ -46,16 +46,16 @@ module.exports = function(app) {
     app.post('/addLike/:comId', function(req, res){
         Threads.newLike(req.params.comId, function(err, cb){
             if(err) return err;
-            res.send('new like');
-            //res.redirect('/allComments')
+            console.log('new like');
+            res.redirect('/')
         })
     })
     // Post method when removing like
     app.post('/removeLike/:comId', function(req, res){
-        Threads.newLike(req.params.comId, function(err, cb){
+        Threads.removeLike(req.params.comId, function(err, cb){
             if(err) return err;
-            res.send('like removed');
-            //res.redirect('/allComments')
+            console.log('like removed');
+            res.redirect('/')
         })
     })
 }

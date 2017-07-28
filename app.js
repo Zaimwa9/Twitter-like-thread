@@ -10,7 +10,7 @@ var bodyParser = require('body-parser')
 var mongoose = require('mongoose');
 var config = require('./config/index.js');
 
-var port = 8000;
+var port = 3012;
 
 
 var db = mongoose.connect(config.getDbConnectionstring(), function() {
