@@ -3,11 +3,18 @@
       <div  style="border-style: solid ; border-width: 1px">
         <p> <%= comments[i].content %> </p>
         <p> <%= comments[i].likesArray.length%>  <i> <sub> By <%=comments[i].username %> on <%=moment(comments[i].created_at).format('DD/MM/YY h:mm:ss') %> </sub> </i> 
+        
+        <% if(!comments[i].likesArray.includes(ip)){ %>
         <form method="post" action="/addLike/<%= comments[i]._id %>">
         <button> Like </button>
         </form>
+        <%}else{ %>
         <form method="post" action="/removeLike/<%= comments[i]._id  %>">
         <button> Unlike </button>
+        </form>
+        <%}%>
+        <form method="post" action="/delete/<%= comments[i]._id  %>">
+        <button> delete </button>
         </form>
       </div>
     <% } %>
@@ -18,5 +25,5 @@
 
 <form method="post" action="/newComment">                      
      <textarea  id="comment" input type="text" name="comment" style="width:648px; height:120px" required></textarea> <br>
-      <button class="form-btn semibold" type="submit" value="submit_com"> Afflutweet it </button>
+     <button class="form-btn semibold" type="submit" value="submit_com"> Afflutweet it </button>
 </form>
